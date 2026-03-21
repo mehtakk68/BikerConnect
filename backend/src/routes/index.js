@@ -1,0 +1,11 @@
+const router = require('express').Router();
+
+router.use('/users', require('./users'));
+router.use('/posts', require('./posts'));
+router.use('/rides', require('./rides'));
+router.use('/chats', require('./chats'));
+router.use('/groups', require('./groups'));
+router.use('/events', require('./events'));
+router.use('/admin', require('./admin'));
+
+module.exports = router;

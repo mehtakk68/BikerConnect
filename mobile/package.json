@@ -1,0 +1,19 @@
+{
+  "name": "rideconnect-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
+  },
+  "dependencies": {
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "@react-navigation/native": "^6.1.17",
+    "expo": "^51.0.20",
+    "react": "18.2.0",
+    "react-native": "0.74.3",
+    "react-native-maps": "1.14.0",
+    "socket.io-client": "^4.7.5"
+  }
+}
