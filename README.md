@@ -1,65 +1,168 @@
-# RideConnect — Biker Community Platform
+# RideConnect — Biker Community Website + Mobile App
 
-Full-stack starter architecture for a free-tier biker social platform across web, mobile, and admin.
+RideConnect is a full-stack community platform for bikers with social feed, realtime ride tracking, nearby rider discovery, events, groups/clubs, and free-tier-first infrastructure.
 
-## 1) Folder Structure
+## Why this architecture
+
+- **100% free-tier compatible** for MVP (no paid chat API, no paid maps API, no paid storage required).
+- **Single JS/TS ecosystem** across backend, web, admin, and React Native mobile app.
+- **Realtime by design** using a self-hosted Socket.io server.
+- **Map stack without Google billing** using OpenStreetMap + Leaflet.
+
+---
+
+## 1) Folder structure
 
 ```text
 RideConnect/
-├── backend/                  # Node.js + Express + MongoDB + Socket.io API
-│   └── src/
-│       ├── config/
-│       ├── controllers/
-│       ├── middleware/
-│       ├── models/
-│       ├── routes/
-│       ├── sockets/
-│       └── server.js
-├── web/                      # React + Tailwind + PWA-ready shell
-├── mobile/                   # React Native (Expo) app shell
-├── admin/                    # React admin dashboard shell
+├── backend/
+│   ├── src/
+│   │   ├── config/                 # DB + Firebase bootstrapping
+│   │   ├── controllers/            # Express route handlers
+│   │   ├── middleware/             # Auth + async error wrappers
+│   │   ├── models/                 # MongoDB collections/schemas
+│   │   ├── routes/                 # REST API routes
+│   │   ├── sockets/                # Socket.io namespaces + events
+│   │   └── server.js
+│   └── package.json
+├── web/                            # React + Tailwind + PWA shell
+├── mobile/                         # React Native (Expo) app shell
+├── admin/                          # Moderation/admin dashboard shell
 ├── docs/
 │   └── DEPLOYMENT.md
-└── .env.example
+├── .env.example
+└── README.md
 ```
 
-## 2) Tech Decisions (Free/Open)
+---
 
-- **Auth**: Firebase Auth (free tier)
-- **DB**: MongoDB Atlas free tier
-- **Realtime**: Socket.io self-hosted on backend
-- **Maps**: OpenStreetMap + Leaflet
-- **Media**: Cloudinary free tier (or Supabase Storage free tier)
-- **Hosting**: Vercel (web/admin), Render/Railway (backend)
+## 2) Free tech stack
 
-## 3) Installation Steps
+### Frontend (Web)
+- React + Vite
+- Tailwind CSS
+- PWA-ready setup
+
+### Mobile App
+- React Native + Expo
+- Single codebase for Android + iOS
+
+### Backend
+- Node.js + Express
+- MongoDB Atlas free tier
+- Socket.io (self-hosted realtime)
+
+### Auth
+- Firebase Auth free tier (email + Google)
+
+### Media storage (choose one)
+- Cloudinary free tier
+- Supabase Storage free tier
+
+### Maps
+- OpenStreetMap tiles
+- Leaflet for map rendering
+
+### Hosting
+- Vercel (web/admin)
+- Render or Railway (backend)
+- MongoDB Atlas (database)
+
+---
+
+## 3) Core feature coverage in this starter
+
+### User & social
+- Profile create/update
+- Nearby rider query (geo search)
+- Feed + post create
+- Groups + events basic CRUD starter
+
+### Ride & realtime
+- Start/end ride APIs
+- Socket namespaces:
+  - `/chat`
+  - `/ride-tracking`
+  - `/notifications`
+
+### Added feature scaffolds
+- **Route sharing** APIs (`/api/v1/routes`)
+- **Marketplace** APIs (`/api/v1/marketplace`)
+- **Safety SOS** APIs (`/api/v1/safety/sos`)
+
+---
+
+## 4) API endpoints (starter)
+
+- `POST /api/v1/users/profile`
+- `GET /api/v1/users/nearby?lng=&lat=&km=`
+- `GET /api/v1/posts/feed`
+- `POST /api/v1/posts`
+- `POST /api/v1/rides/start`
+- `PATCH /api/v1/rides/:id/end`
+- `GET /api/v1/chats/:chatId/messages`
+- `GET|POST /api/v1/groups`
+- `GET|POST /api/v1/events`
+- `GET|POST /api/v1/routes`
+- `GET|POST /api/v1/marketplace`
+- `PATCH /api/v1/marketplace/:id/sold`
+- `GET|POST /api/v1/safety/sos`
+- `PATCH /api/v1/safety/sos/:id/resolve`
+- `GET /api/v1/admin/dashboard`
+
+---
+
+## 5) Installation
 
 ### Prerequisites
 - Node.js 20+
 - npm 10+
-- Expo CLI (for mobile)
-- MongoDB Atlas project
-- Firebase project with email+Google providers enabled
+- MongoDB Atlas free cluster
+- Firebase project (Auth enabled)
+- Expo Go app (for quick mobile validation)
 
-### Clone and install
+### Install all apps
 
 ```bash
-git clone <your-repo-url>
-cd RideConnect
-
 cd backend && npm install
 cd ../web && npm install
 cd ../mobile && npm install
 cd ../admin && npm install
 ```
 
-Copy env template:
+### Configure environment
 
 ```bash
 cp .env.example backend/.env
 ```
 
-## 4) Run Commands
+Update values in `backend/.env` from your Firebase/Mongo/Storage projects.
+
+---
+
+## 6) `.env` template
+
+Use the root `.env.example` as baseline:
+
+```env
+NODE_ENV=development
+PORT=5000
+MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/rideconnect
+JWT_SECRET=super-secret-jwt
+CORS_ORIGIN=http://localhost:5173,http://localhost:5174,http://localhost:19006
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxx@your-project-id.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=service_role_key
+```
+
+---
+
+## 7) Run commands
 
 ```bash
 # backend
@@ -70,7 +173,7 @@ npm run dev
 cd web
 npm run dev
 
-# mobile (Expo)
+# mobile
 cd mobile
 npm run start
 
@@ -79,39 +182,42 @@ cd admin
 npm run dev
 ```
 
-## 5) API Surface (v1)
+---
 
-- `POST /api/v1/users/profile` — create/update user profile
-- `GET /api/v1/users/nearby` — nearby riders via geo query
-- `GET /api/v1/posts/feed` — social feed
-- `POST /api/v1/posts` — create post
-- `POST /api/v1/rides/start` — start ride
-- `PATCH /api/v1/rides/:id/end` — end ride
-- `GET /api/v1/chats/:chatId/messages` — message history
-- `GET|POST /api/v1/groups` — groups CRUD (starter)
-- `GET|POST /api/v1/events` — events CRUD (starter)
-- `GET /api/v1/admin/dashboard` — admin metrics
+## 8) Deployment steps
 
-## 6) Socket.io Namespaces
+1. **MongoDB Atlas**
+   - Create M0 cluster.
+   - Allow backend host IP and set DB user.
+2. **Firebase**
+   - Enable email/password + Google sign-in.
+   - Create admin SDK credentials for backend verification.
+3. **Backend (Render/Railway)**
+   - Deploy `backend` as Node service.
+   - Set env vars from `.env.example`.
+4. **Web + Admin (Vercel)**
+   - Deploy `web` and `admin` as separate projects.
+   - Configure API base URLs to backend service URL.
+5. **Mobile**
+   - Use Expo EAS for Android/iOS production builds.
 
-- `/chat`
-- `/ride-tracking`
-- `/notifications`
+Detailed checklist: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
-## 7) Next Implementation Milestones
+---
 
-1. Complete Firebase token lifecycle in web/mobile clients.
-2. Add media upload endpoints (Cloudinary/Supabase adapters).
-3. Build full privacy and join-request flows for live rides.
-4. Add moderation queues and marketplace workflows.
-5. Add gamification workers (streaks, milestones, challenges).
-6. Add unit/integration tests + CI.
+## 9) Viral/retention features recommended next
 
-## 8) Security Baseline Included
+- Moto-vlog reels feed with trending audio overlays.
+- Offline ride recording and later sync.
+- Fuel station + weather overlays.
+- Rider verification badge flow.
+- Community challenges and achievement streak seasons.
+- Trip expense splitter with per-rider settlement logs.
 
-- Helmet
-- Rate limiting
-- NoSQL injection sanitization
-- Token verification middleware
+---
 
-See detailed deployment in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+## 10) Freemium model integration plan
+
+- **Free**: profile, posting, basic chat, public rides, nearby riders.
+- **Pro Rider**: advanced analytics, full history, private premium groups, ad-free experience, custom badge.
+- Keep core infra free by using open-source + self-hosted realtime; monetize only via premium features and sponsorships.
